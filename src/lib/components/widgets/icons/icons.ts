@@ -1,0 +1,77 @@
+// Solid Icons
+export { 
+  faHome,
+  faUser,
+  faEnvelope,
+  faPhone,
+  faSearch,
+  faBars,
+  faTimes,
+  faChevronDown,
+  faChevronUp,
+  faChevronLeft,
+  faChevronRight,
+  faCheck,
+  faPlus,
+  faMinus,
+  faEdit,
+  faTrash,
+  faStar,
+  faHeart,
+  faShare,
+  faDownload,
+  faUpload,
+  faCog,
+  faSpinner,
+  faExclamationTriangle,
+  faInfoCircle,
+  faCheckCircle,
+  faTimesCircle,
+  faQuestionCircle,
+  faBolt,
+  faTerminal,
+  faTachometerAlt,
+  faKey,
+  faCode,
+  faRocket,
+  faExternalLinkAlt,
+  faFolder,
+  faCalendar,
+  faFileAlt,
+  faPalette,
+  faSignOutAlt,
+  faEllipsisV,
+  faGlobe,
+  faCopy,
+  faEye,
+  faEyeSlash,
+  faCrown,
+  faGift,
+  faLock,
+  faCreditCard,
+  faShieldAlt,
+  faBell,
+  faChartLine,
+  faUsers
+} from '@fortawesome/free-solid-svg-icons';
+
+// Regular Icons
+export {
+  faHeart as faHeartRegular,
+  faStar as faStarRegular,
+  faUser as faUserRegular,
+  faEnvelope as faEnvelopeRegular
+} from '@fortawesome/free-regular-svg-icons';
+
+// Brand Icons
+export {
+  faFacebook,
+  faTwitter,
+  faInstagram,
+  faLinkedin,
+  faGithub,
+  faGoogle,
+  faApple,
+  faDiscord,
+  faYoutube
+} from '@fortawesome/free-brands-svg-icons'; 

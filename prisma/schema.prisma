@@ -1,0 +1,73 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Users {
+  userId        String     @id @default(uuid())
+  email         String     @unique
+  password      String
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+  projects      Projects[] @relation("UserCollaborations")
+  ownedProjects Projects[] @relation("UserOwnedProjects")
+  Session       Session?
+}
+
+model Session {
+  uuid      String   @id @default(uuid())
+  token     String   @unique
+  user      Users    @relation(fields: [userId], references: [userId])
+  userId    String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
+
+model Projects {
+  uuid          String           @id @default(uuid())
+  name          String
+  description   String?
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+  keys          TranslationKey[]
+  owner         Users            @relation("UserOwnedProjects", fields: [ownerId], references: [userId])
+  ownerId       String
+  collaborators Users[]          @relation("UserCollaborations")
+}
+
+model TranslationKey {
+  uuid String @id @default(uuid())
+  key  String @unique
+
+  Projects     Projects?     @relation(fields: [projectsUuid], references: [uuid])
+  projectsUuid String?
+  translations Translation[]
+}
+
+model Translation {
+  uuid  String @id @default(uuid())
+  value String
+
+  TranslationKey     TranslationKey? @relation(fields: [translationKeyUuid], references: [uuid])
+  translationKeyUuid String?
+  Locale             Locale?         @relation(fields: [localeUuid], references: [uuid])
+  localeUuid         String?
+}
+
+model Locale {
+  uuid        String        @id @default(uuid())
+  code        String        @unique
+  name        String
+  createdAt   DateTime      @default(now())
+  Translation Translation[]
+}
