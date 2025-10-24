@@ -4,7 +4,7 @@
 	import { ModeWatcher } from 'mode-watcher';
 	import '../../app.css'
 
-	let { children } = $props();
+	let { children, data } = $props();
 </script>
 
 <svelte:head>
@@ -12,7 +12,7 @@
 </svelte:head>
 
 <ModeWatcher />
-<Sidebar>
+<Sidebar data={data.user}>
 	<div class="p-4">
 		{@render children?.()}
 	</div>

@@ -13,15 +13,26 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Media {
+  mediaId   String   @id @default(uuid())
+  mediaUrl  String
+  mediaType String?
+  mediaKey  String?
+  createdAt DateTime @default(now())
+  Users     Users?   @relation("UserProfileImage", fields: [mediaId], references: [userId])
+  userId    String?
+}
+
 model Users {
   userId        String     @id @default(uuid())
+  fullName      String     @default("")
   email         String     @unique
-  password      String
   createdAt     DateTime   @default(now())
   updatedAt     DateTime   @updatedAt
   projects      Projects[] @relation("UserCollaborations")
   ownedProjects Projects[] @relation("UserOwnedProjects")
   Session       Session?
+  ProfileImage  Media?     @relation("UserProfileImage")
 }
 
 model Session {

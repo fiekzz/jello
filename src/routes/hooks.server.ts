@@ -3,22 +3,27 @@ import { prisma } from "$lib/services/prisma";
 import { redirect, type Handle } from "@sveltejs/kit";
 
 export const handle: Handle = async ({ event, resolve }) => {
+    // Get session cookie and validate it
+    const sessionToken = event.cookies.get('session');
+    
+    // Validate session if token exists
+    event.locals.user = sessionToken ? await validateSession(sessionToken) : null;
 
-    const session = event.cookies.get('session')
+    console.log(event.locals.user ? `Authenticated user: ${event.locals.user.email}` : 'No authenticated user');
 
-    event.locals.user = session ? await validateSession(session) : null
-
-    const protectedRoutes = ['/projects', '/settings'];
-
+    // Define protected routes
+    const protectedRoutes = ['/dashboard', '/projects', '/tasks'];
     const isProtectedRoute = protectedRoutes.some((route) => event.url.pathname.startsWith(route));
 
+    // Redirect to sign-in if accessing protected route without authentication
     if (isProtectedRoute && !event.locals.user) {
         throw redirect(303, '/sign-in');
     }
 
-    if (event.url.pathname === '/sign-in' && event.locals.user) {
+    // Redirect authenticated users away from sign-in/sign-up pages
+    if ((event.url.pathname === '/sign-in' || event.url.pathname === '/sign-up') && event.locals.user) {
         throw redirect(303, '/dashboard');
     }
 
-    return resolve(event)
-}
+    return resolve(event);
+};

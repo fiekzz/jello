@@ -1,3 +1,4 @@
+import { Auth0Client, createAuth0Client } from "@auth0/auth0-spa-js";
 import { PrismaClient } from "@prisma/client";
 
 class Singleton {
@@ -6,12 +7,6 @@ class Singleton {
     private prisma: PrismaClient;
 
     private constructor() {
-        // Initialize Prisma Client for edge runtime
-
-        // let test = new PrismaClient().$extends(withAccelerate());
-        // Cast the extended client back to PrismaClient to satisfy the declared type
-        // this.prisma = test as unknown as PrismaClient;
-
         this.prisma = new PrismaClient({})
     }
 
