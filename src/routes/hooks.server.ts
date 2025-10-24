@@ -1,4 +1,4 @@
-import { validateSession } from "$lib/server/auth";
+import { validateSession } from "$lib/server/session";
 import { prisma } from "$lib/services/prisma";
 import { redirect, type Handle } from "@sveltejs/kit";
 

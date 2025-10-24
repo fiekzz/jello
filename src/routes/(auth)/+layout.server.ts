@@ -1,6 +1,6 @@
 import { redirect } from "@sveltejs/kit";
 import type { LayoutServerLoad } from "./$types";
-import { validateSession } from "$lib/server/auth";
+import { validateSession } from "$lib/server/session";
 import { get } from "svelte/store";
 import { appUser, getToken } from "$lib/services/auth/auth";
 import { prisma } from "$lib/services/prisma";

@@ -1,5 +1,5 @@
 import { json, type RequestHandler } from '@sveltejs/kit';
-import { createSession } from '$lib/server/auth';
+import { createSession } from '$lib/server/session';
 import { prisma } from '$lib/services/prisma';
 
 export const POST: RequestHandler = async ({ request, cookies, locals }) => {
