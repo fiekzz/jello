@@ -19,8 +19,26 @@ model Media {
   mediaType String?
   mediaKey  String?
   createdAt DateTime @default(now())
-  Users     Users?   @relation("UserProfileImage", fields: [mediaId], references: [userId])
-  userId    String?
+  
+  Users     Users?   @relation("UserProfileImage", fields: [userId], references: [userId])
+  userId    String?  @unique
+
+  Projects  Projects? @relation("ProjectImage", fields: [projectId], references: [uuid])
+  projectId String?   @unique
+}
+
+model Projects {
+  uuid          String   @id @default(uuid())
+  name          String
+  description   String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  Tasks         Tasks[]
+  owner         Users    @relation("UserOwnedProjects", fields: [ownerId], references: [userId])
+  ownerId       String
+  collaborators Users[]  @relation("UserCollaborations")
+
+  ProjectImage Media? @relation("ProjectImage")
 }
 
 model Users {
@@ -42,18 +60,6 @@ model Session {
   userId    String   @unique
   expiresAt DateTime
   createdAt DateTime @default(now())
-}
-
-model Projects {
-  uuid          String   @id @default(uuid())
-  name          String
-  description   String?
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  Tasks         Tasks[]
-  owner         Users    @relation("UserOwnedProjects", fields: [ownerId], references: [userId])
-  ownerId       String
-  collaborators Users[]  @relation("UserCollaborations")
 }
 
 model Tasks {
