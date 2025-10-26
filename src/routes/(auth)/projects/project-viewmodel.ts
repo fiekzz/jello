@@ -1,23 +1,39 @@
 import { prisma } from "$lib/services/prisma";
-import type { Projects, Tasks, Users } from "@prisma/client";
+import type { Media, Projects, Tasks, Users } from "@prisma/client";
 import axios from "axios";
 
 // Define the correct return type for projects with tasks
 type ProjectWithTasks = Projects & {
     Tasks: Tasks[];
-    owner: Users
+    owner: Users,
+    collaborators: ({
+        ProfileImage: Media | null;
+    } & Users)[];
+    ProjectImage: Media | null;
 };
 
 class ProjectViewModel {
 
-    async createProject(name: string, description: string): Promise<number> {
+    async createProject(name: string, description: string, imageFile: FileList): Promise<number> {
 
-        const response = await axios.post('/api/v1/projects/create', {
-            name: name,
-            description: description
-        }, {
-            withCredentials: true
-        });
+        const formData = new FormData()
+
+        formData.append('name', name);
+        formData.append('description', description);
+        if (imageFile.length > 0) {
+            formData.append('image', imageFile[0]);
+        }
+
+        const response = await axios.post(
+            '/api/v1/projects/create',
+            formData,
+            {
+                withCredentials: true,
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            }
+        );
 
         if (response.status === 201) {
             return response.data.id;
@@ -36,8 +52,14 @@ class ProjectViewModel {
                 }
             },
             include: {
+                ProjectImage: true,
                 Tasks: true,
-                owner: true
+                owner: true,
+                collaborators: {
+                    include: {
+                        ProfileImage: true
+                    }
+                },
             }
         })
 

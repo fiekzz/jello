@@ -6,12 +6,13 @@
 	import Input from "$lib/components/ui/input/input.svelte";
 	import Label from "$lib/components/ui/label/label.svelte";
 	import AppDialog from "$lib/components/widgets/AppDialog.svelte";
+	import AppUploadImage from "$lib/components/widgets/AppUploadImage.svelte";
 	// import { Plus } from "@lucide/svelte/icons";
     import { Plus } from "@lucide/svelte";
 	import { toast } from "svelte-sonner";
 
     interface Props {
-        onCreate: (name: string, description: string) => Promise<void>;
+        onCreate: (name: string, description: string, imageFile: FileList | undefined) => Promise<void>;
         openDialog?: boolean;
     }
 
@@ -19,6 +20,7 @@
 
     let name: string = $state('');
     let description: string = $state('');
+    let imageFile: FileList | undefined = $state();
 
     async function handleCreate() {
         if (onCreate) {
@@ -33,10 +35,11 @@
                 return;
             }
 
-            await onCreate(name, description);
+            await onCreate(name, description, imageFile);
 
             name = '';
             description = '';
+            imageFile = undefined;
             openDialog = false;
         }
     }
@@ -50,6 +53,7 @@
     <div>
         <FieldGroup>
             <FieldSet>
+                <AppUploadImage bind:imageFile={imageFile} />
                 <Field>
                     <Label>Name</Label>
                     <Input bind:value={name} placeholder="e.g. My Project" />

@@ -31,7 +31,6 @@
 				<div>
 					<AppBreadcrumb items={breadcrumbsItems} />
 				</div>
-				<!-- <h2 class="text-3xl">{title}</h2> -->
 			</div>
 			<div class="flex flex-row gap-4">
 				{#each actions as action (action.title)}
@@ -40,7 +39,6 @@
 							action.action();
 						}}
 					>
-						<!-- {@html action.icon.outerHTML} -->
 						{#if action.icon}
 							{#if action.icon}
 								<action.icon class="mr-2 h-4 w-4" />
