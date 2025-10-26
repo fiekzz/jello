@@ -45,23 +45,34 @@ model Session {
 }
 
 model Projects {
-  uuid          String           @id @default(uuid())
+  uuid          String   @id @default(uuid())
   name          String
   description   String?
-  createdAt     DateTime         @default(now())
-  updatedAt     DateTime         @updatedAt
-  keys          TranslationKey[]
-  owner         Users            @relation("UserOwnedProjects", fields: [ownerId], references: [userId])
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  Tasks         Tasks[]
+  owner         Users    @relation("UserOwnedProjects", fields: [ownerId], references: [userId])
   ownerId       String
-  collaborators Users[]          @relation("UserCollaborations")
+  collaborators Users[]  @relation("UserCollaborations")
+}
+
+model Tasks {
+  taskId      String           @id @default(uuid())
+  title       String
+  description String?
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  keys        TranslationKey[]
+  project     Projects         @relation(fields: [projectId], references: [uuid])
+  projectId   String
 }
 
 model TranslationKey {
-  uuid String @id @default(uuid())
-  key  String @unique
-
-  Projects     Projects?     @relation(fields: [projectsUuid], references: [uuid])
-  projectsUuid String?
+  uuid         String        @id @default(uuid())
+  key          String        @unique
+  isPublished  Boolean       @default(false)
+  Projects     Tasks?        @relation(fields: [taskId], references: [taskId])
+  taskId       String?
   translations Translation[]
 }
 

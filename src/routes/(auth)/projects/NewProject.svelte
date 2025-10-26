@@ -8,25 +8,58 @@
 	import AppDialog from "$lib/components/widgets/AppDialog.svelte";
 	// import { Plus } from "@lucide/svelte/icons";
     import { Plus } from "@lucide/svelte";
+	import { toast } from "svelte-sonner";
+
+    interface Props {
+        onCreate: (name: string, description: string) => Promise<void>;
+        openDialog?: boolean;
+    }
+
+    let { onCreate, openDialog = $bindable(false) }: Props = $props();
+
+    let name: string = $state('');
+    let description: string = $state('');
+
+    async function handleCreate() {
+        if (onCreate) {
+
+            if (!name || name.trim() === '') {
+                toast.error('Project name is required.');
+                return;
+            }
+
+            if (!description || description.trim() === '') {
+                toast.error('Project description is required.');
+                return;
+            }
+
+            await onCreate(name, description);
+
+            name = '';
+            description = '';
+            openDialog = false;
+        }
+    }
 </script>
 
 <AppDialog title="Create new project" trigger={{
     icon: Plus,
-    title: "New Project"
-}}>
+    title: "New Project",
+    triggerVariant: "outline"
+}} bind:openDialog={openDialog}>
     <div>
         <FieldGroup>
             <FieldSet>
                 <Field>
                     <Label>Name</Label>
-                    <Input placeholder="e.g. My Project" />
+                    <Input bind:value={name} placeholder="e.g. My Project" />
                 </Field>
                 <Field>
                     <Label>Description</Label>
-                    <Input placeholder="e.g. This is my project description" />
+                    <Input bind:value={description} placeholder="e.g. This is my project description" />
                 </Field>
             </FieldSet>
-            <Button>Create project</Button>
+            <Button onclick={handleCreate}>Create project</Button>
         </FieldGroup>
     </div>
 </AppDialog>

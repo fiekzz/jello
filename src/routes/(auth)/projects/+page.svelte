@@ -1,9 +1,7 @@
 <script lang="ts">
 	import PageLayout from '$lib/components/widgets/PageLayout.svelte';
-	import { ProjectViewModel } from './project-viewmodel';
+	import { ProjectViewModel, type ProjectWithTasks } from './project-viewmodel';
 	import NewProject from './NewProject.svelte';
-
-	// import * as Table from '$lib/components/ui/table/index.js';
 	import * as Table from '$lib/components/ui/table/index';
 	import {
 		FlexRender,
@@ -12,56 +10,98 @@
 		renderSnippet
 	} from '$lib/components/ui/data-table/index.js';
 	import { getCoreRowModel, type ColumnDef } from '@tanstack/table-core';
-	import type { Projects } from '@prisma/client';
+	import type { Tasks } from '@prisma/client';
+	import { toast } from 'svelte-sonner';
+	import { goto, invalidateAll } from '$app/navigation';
+	import Button from '$lib/components/ui/button/button.svelte';
+	import ProjectActions from './ProjectActions.svelte';
+	import Label from '$lib/components/ui/label/label.svelte';
+	import type { Snippet } from 'svelte';
+	import DataTableCheckbox from '$lib/components/widgets/tables/DataTableCheckbox.svelte';
+	import Separator from '$lib/components/ui/separator/separator.svelte';
+	import Card from '$lib/components/ui/card/card.svelte';
+	import IconLabel from '$lib/components/widgets/IconLabel.svelte';
+	import { Calendar, InboxIcon, UserRound } from '@lucide/svelte';
+	import { DateTime } from 'luxon';
 
 	const viewModel = new ProjectViewModel();
 
-	const columns: ColumnDef<Projects>[] = []
-
 	const { data } = $props();
 
-	const table = createSvelteTable({
-		data: data.projects,
-		columns,
-		getCoreRowModel: getCoreRowModel()
+	let projectsTable = $state(data.projects);
+
+	$effect(() => {
+		projectsTable = data.projects;
 	});
+
+	async function handleCreateProject(name: string, description: string) {
+		try {
+			await viewModel.createProject(name, description);
+
+			toast.success('Project created successfully.');
+			openDialog = false;
+
+			await invalidateAll();
+		} catch (error) {
+			toast.error('Failed to create project.');
+		}
+	}
+
+	let openDialog = $state(false);
 </script>
 
-<PageLayout title="Projects" actions={[]}>
-	<NewProject />
-	<div class="rounded-md border my-4">
-		<Table.Root>
-			<Table.Header>
-				{#each table.getHeaderGroups() as headerGroup (headerGroup.id)}
-					<Table.Row>
-						{#each headerGroup.headers as header (header.id)}
-							<Table.Head class="[&:has([role=checkbox])]:pl-3">
-								{#if !header.isPlaceholder}
-									<FlexRender
-										content={header.column.columnDef.header}
-										context={header.getContext()}
-									/>
-								{/if}
-							</Table.Head>
-						{/each}
-					</Table.Row>
-				{/each}
-			</Table.Header>
-			<Table.Body>
-				{#each table.getRowModel().rows as row (row.id)}
-					<Table.Row data-state={row.getIsSelected() && 'selected'}>
-						{#each row.getVisibleCells() as cell (cell.id)}
-							<Table.Cell class="[&:has([role=checkbox])]:pl-3">
-								<FlexRender content={cell.column.columnDef.cell} context={cell.getContext()} />
-							</Table.Cell>
-						{/each}
-					</Table.Row>
-				{:else}
-					<Table.Row>
-						<Table.Cell colspan={columns.length} class="h-24 text-center">No results.</Table.Cell>
-					</Table.Row>
-				{/each}
-			</Table.Body>
-		</Table.Root>
+<PageLayout
+	title="Projects"
+	actions={[]}
+	breadcrumbsItems={[{ title: 'Projects', href: '/projects' }]}
+>
+	<div class="flex flex-row justify-between items-center">
+		<Label class="text-lg font-medium">All Projects</Label>
+		<NewProject bind:openDialog onCreate={handleCreateProject} />
+	</div>
+	<div class="flex flex-col mt-4">
+		{#each projectsTable as project (project.uuid)}
+			<Card class="mb-4 p-4 cursor-pointer" onclick={() => goto(`/projects/${project.uuid}`)}>
+				<div class="flex flex-col">
+					<div class="flex flex-col">
+						<h2 class="text-xl font-semibold">{project.name}</h2>
+						<div class="flex flex-row items-center gap-4">
+							<IconLabel IconLabel={InboxIcon} label={project.description ?? ''} />
+							<IconLabel
+								IconLabel={Calendar}
+								label={DateTime.fromJSDate(new Date(project.createdAt)).toFormat('dd MMM yyyy')}
+							/>
+							<IconLabel IconLabel={UserRound} label={project.owner.fullName ?? 'Unknown Owner'} />
+						</div>
+					</div>
+					<Separator class="my-2" />
+					<div class="flex justify-between items-center">
+						<p class="text-sm text-gray-500 mt-1">
+							Updated {DateTime.now()
+								.diff(DateTime.fromJSDate(new Date(project.updatedAt)), 'days')
+								.days.toFixed(0)} day ago
+						</p>
+						<ProjectActions
+							onEdit={async () => {
+								// Handle edit action
+							}}
+							onDelete={async () => {
+								try {
+									await viewModel.deleteProject(project.uuid);
+									toast.success('Project deleted successfully.');
+									await invalidateAll();
+									console.log('Project deleted, refreshed data.');
+								} catch (error) {
+									console.error(error);
+
+									toast.error('Failed to delete project.');
+								}
+							}}
+							projectId={project.uuid}
+						/>
+					</div>
+				</div>
+			</Card>
+		{/each}
 	</div>
 </PageLayout>

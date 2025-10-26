@@ -105,7 +105,7 @@ export async function initAuth0(): Promise<Auth0Client> {
     return auth0client;
 }
 
-type SocialConnection = 'google-oauth2' | 'facebook' | 'github' | 'twitter';
+type SocialConnection = 'google-oauth2' | 'facebook' | 'Github' | 'twitter';
 
 export async function loginWithSocial(connection: SocialConnection): Promise<boolean> {
     if (!browser) {

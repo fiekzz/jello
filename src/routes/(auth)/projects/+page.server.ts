@@ -1,17 +1,17 @@
 import { redirect } from "@sveltejs/kit";
 import { ProjectViewModel } from "./project-viewmodel";
 
-export async function load({ locals }) {
+export async function load({ locals, cookies }) {
 
-    const userId = locals.user?.userId
+    const session = cookies.get('session');
 
-    if (!userId) {
-        throw redirect(303, '/sign-in')
+    if (!session) {
+        redirect(303, '/sign-in');
     }
 
     const viewModel = new ProjectViewModel()
 
-    const projects = await viewModel.fetchProjects(userId)
+    const projects = await viewModel.fetchProjectsBySession(session)
 
     return {
         projects

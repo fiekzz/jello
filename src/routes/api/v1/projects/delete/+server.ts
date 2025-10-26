@@ -2,22 +2,27 @@ import { prisma } from "$lib/services/prisma";
 import { FailResponse } from "$lib/services/server-response/fail-response";
 import { SuccessResponse } from "$lib/services/server-response/success-response";
 import type { RequestHandler } from "@sveltejs/kit";
-import * as z from 'zod';
+import z from "zod";
+
 
 const bodyTypes = z.object({
-    name: z.string().min(3).max(100),
-    description: z.string().max(500).optional()
+    projectId: z.string()
 })
 
 export const POST: RequestHandler = async ({ request, locals }) => {
 
     try {
-        
+
         const body = await request.json()
+
+        console.log('Request body for delete project:', body);
 
         const parsedBody = bodyTypes.safeParse(body);
 
         if (!parsedBody.success) {
+
+            console.error(parsedBody.error);
+
             return new FailResponse('Invalid request body', 400).send();
         }
 
@@ -25,26 +30,17 @@ export const POST: RequestHandler = async ({ request, locals }) => {
             return new FailResponse('Unauthorized', 401).send();
         }
 
-        const { name, description } = parsedBody.data;
+        const { projectId } = parsedBody.data;
 
-        const project = await prisma.projects.create({
-            data: {
-                owner: {
-                    connect: {
-                        userId: locals.user.userId
-                    }
-                },
-                name: name,
-                description: description || ''
+        await prisma.projects.delete({
+            where: {
+                uuid: projectId
             }
         })
 
-        return new SuccessResponse({ id: project.uuid }, 'Project created successfully', 201).send();
+        return new SuccessResponse(null, 'Project deleted successfully', 200).send();
 
     } catch (error) {
-        
-        console.error('Error creating project:', error);
-        return new FailResponse('Internal server error', 500).send();
+        return new FailResponse('Internal Server Error', 500).send();
     }
-
 }

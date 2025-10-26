@@ -10,7 +10,7 @@
         }
     });
 
-    async function handleLogin(connection: 'google-oauth2' | 'github') {
+    async function handleLogin(connection: 'google-oauth2' | 'Github') {
         try {
             await loginWithSocial(connection);
         } catch (error) {
@@ -43,7 +43,7 @@
             <button on:click={() => handleLogin('google-oauth2')} class="login-btn google">
                 Sign in with Google
             </button>
-            <button on:click={() => handleLogin('github')} class="login-btn github">
+            <button on:click={() => handleLogin('Github')} class="login-btn github">
                 Sign in with GitHub
             </button>
         </div>

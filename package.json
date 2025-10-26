@@ -40,11 +40,15 @@
 		"@fortawesome/free-solid-svg-icons": "^7.1.0",
 		"@prisma/client": "6.17.1",
 		"@tailwindcss/vite": "^4.1.15",
+		"@types/luxon": "^3.7.1",
 		"@types/node": "^24.9.1",
 		"axios": "^1.12.2",
 		"dotenv": "^17.2.3",
+		"luxon": "^3.7.2",
 		"mode-watcher": "^1.1.0",
 		"prisma": "^6.17.1",
-		"tailwindcss": "^4.1.15"
+		"svelte-sonner": "^1.0.5",
+		"tailwindcss": "^4.1.15",
+		"zod": "^4.1.12"
 	}
 }

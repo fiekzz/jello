@@ -38,7 +38,7 @@
 			const service = AuthService.getInstance()
 			const client: Auth0Client = await service.initAuth();
 
-			const success = await loginWithSocial('github');
+			const success = await loginWithSocial('Github');
 
 			if (success) {
 				goto('/dashboard');
