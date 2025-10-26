@@ -34,6 +34,9 @@
 	},
 	"dependencies": {
 		"@auth0/auth0-spa-js": "^2.7.0",
+		"@aws-sdk/client-s3": "^3.917.0",
+		"@aws-sdk/lib-storage": "^3.917.0",
+		"@aws-sdk/s3-request-presigner": "^3.917.0",
 		"@fortawesome/fontawesome-svg-core": "^7.1.0",
 		"@fortawesome/free-brands-svg-icons": "^7.1.0",
 		"@fortawesome/free-regular-svg-icons": "^7.1.0",
@@ -44,11 +47,14 @@
 		"@types/node": "^24.9.1",
 		"axios": "^1.12.2",
 		"dotenv": "^17.2.3",
+		"file-type": "^21.0.0",
 		"luxon": "^3.7.2",
 		"mode-watcher": "^1.1.0",
 		"prisma": "^6.17.1",
+		"sharp": "^0.34.4",
 		"svelte-sonner": "^1.0.5",
 		"tailwindcss": "^4.1.15",
+		"uuid": "^13.0.0",
 		"zod": "^4.1.12"
 	}
 }
